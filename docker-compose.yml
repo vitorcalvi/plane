@@ -155,7 +155,7 @@ services:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
 
-  # Comment this if you already have a reverse proxy running
+  # Updated proxy service with SSL support
   proxy:
     container_name: proxy
     build:
@@ -163,10 +163,17 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - ${NGINX_PORT}:80
+      - 80:80 # HTTP
+      - 443:443 # HTTPS
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template # Nginx template
+      - /etc/letsencrypt:/etc/letsencrypt # Mount SSL certificates
+      - ./env.sh:/usr/local/bin/env.sh # Environment script
     environment:
-      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      NGINX_SERVER_NAME: plane.dyagnosys.com
+      WEB_URL: http://web:80 # Update to the web service
+      API_URL: http://api:8000 # Update to the API service
+      SPACE_URL: http://space:4000 # Update to the space service
     depends_on:
       - web
       - api
