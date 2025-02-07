@@ -4,9 +4,10 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // ui
+import { SITES_ISSUE_LAYOUTS } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
-// constants
-import { ISSUE_LAYOUTS } from "@/constants/issue";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
@@ -20,6 +21,8 @@ type Props = {
 
 export const IssuesLayoutSelection: FC<Props> = observer((props) => {
   const { anchor } = props;
+  // hooks
+  const { t } = useTranslation();
   // router
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,11 +45,11 @@ export const IssuesLayoutSelection: FC<Props> = observer((props) => {
 
   return (
     <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
-      {ISSUE_LAYOUTS.map((layout) => {
+      {SITES_ISSUE_LAYOUTS.map((layout) => {
         if (!layoutOptions[layout.key]) return;
 
         return (
-          <Tooltip key={layout.key} tooltipContent={layout.title}>
+          <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)}>
             <button
               type="button"
               className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
